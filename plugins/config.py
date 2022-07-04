@@ -61,16 +61,18 @@ class Config(object):
     TODAY_USERS = []
     TIME_GAP = int(os.environ.get("TIME_GAP", 2))
     RATE_MSG_ID = int(os.environ.get("RATE_MSG_ID", 123))
-    SP_LIT_ALGO_RITH_M = Config.SP_LIT_ALGO_RITH_M
-    DIS_ABLE_ST_GFC_COMMAND_I = Config.DIS_ABLE_ST_GFC_COMMAND_I
-    SLEEP_THRES_HOLD = int(Config.SLEEP_THRES_HOLD)
-TG_MAX_FILE_SIZE = Config.TG_MAX_FILE_SIZE
-FREE_USER_MAX_FILE_SIZE = Config.FREE_USER_MAX_FILE_SIZE
-CHUNK_SIZE = Config.CHUNK_SIZE
-DEF_THUMB_NAIL_VID_S = Config.DEF_THUMB_NAIL_VID_S
-MAX_MESSAGE_LENGTH = Config.MAX_MESSAGE_LENGTH
-PROCESS_MAX_TIMEOUT = Config.PROCESS_MAX_TIMEOUT
-ARIA_TWO_STARTED_PORT = Config.ARIA_TWO_STARTED_PORT
-EDIT_SLEEP_TIME_OUT = Config.EDIT_SLEEP_TIME_OUT
-MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START = Config.MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START  # noqa: E501
-MAX_TG_SPLIT_FILE_SIZE = Config.MAX_TG_SPLIT_FILE_SIZE
+    CHUNK_SIZE = int(os.environ.get("CHUNK_SIZE", "128"))
+    # default thumbnail to be used in the videos
+    DEF_THUMB_NAIL_VID_S = os.environ.get("DEF_THUMB_NAIL_VID_S", "https://telegra.ph/file/3a7f09b89943b51cdba38.jpg")
+   # maximum message length in Telegram
+    MAX_MESSAGE_LENGTH = 4096
+# set timeout for subprocess
+    PROCESS_MAX_TIMEOUT = 3600
+#
+    SP_LIT_ALGO_RITH_M = os.environ.get("SP_LIT_ALGO_RITH_M", "hjs")
+    ARIA_TWO_STARTED_PORT = int(os.environ.get("ARIA_TWO_STARTED_PORT", "6800"))
+    EDIT_SLEEP_TIME_OUT = int(os.environ.get("EDIT_SLEEP_TIME_OUT", "15"))
+    MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START = int(os.environ.get("MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START", 600))
+    MAX_TG_SPLIT_FILE_SIZE = int(os.environ.get("MAX_TG_SPLIT_FILE_SIZE", "1072864000"))
+# .a dd config vars for the display progress
+
