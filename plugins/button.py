@@ -225,15 +225,13 @@ async def youtube_dl_call_back(bot, update):
         time_taken_for_download = (end_one -start).seconds
         file_size = os.stat(download_directory).st_size
         if file_size > Config.TG_MAX_FILE_SIZE:
-            url = "https://transfer.sh/{}".format(download_directory)
-            max_days = "5"
-            command_to_exec = [
+            url = "https://api.anonfiles.com/upload"
+            command_to_exec=[
                 "curl",
-                # "-H", 'Max-Downloads: 1',
-                "-H", 'Max-Days: 5',  # + max_days + '',
-                "--upload-file", download_directory,
-                url
+                "-F", f"file=@\"{after_download_file_name}\"", url
             ]
+
+            
             await update.message.edit_caption(
                 caption=Translation.UPLOAD_START,
                 parse_mode=enums.ParseMode.HTML
