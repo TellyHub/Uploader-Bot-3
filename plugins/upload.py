@@ -24,10 +24,10 @@ from plugins.functions.display_progress import (
     humanbytes
 )
 from plugins.functions.help_Nekmo_ffmpeg import *
-from plugins.split_large_file import split_large_files
+
 from plugins.functions.copy_similar_file import copy_file
 from plugins.config import Config 
-from plugins.split_large_file import *
+
 
 
 
