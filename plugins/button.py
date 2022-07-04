@@ -237,27 +237,25 @@ async def youtube_dl_call_back(bot, update):
                 caption=Translation.UPLOAD_START,
                 parse_mode=enums.ParseMode.HTML
             )
-            else:
+        else:
                 # try to upload file
-                bot.send_document(
-                    chat_id=update.from_user.id,
-                    document=after_download_path,
-                    caption=description,
+            await bot.send_document(
+                chat_id=update.from_user.id,
+                document=after_download_path,
+                caption=description,
                     # reply_markup=reply_markup,
-                    thumb=thumb_image_path,
-                    reply_to_message_id=update.message_id
-                )
-                bot.edit_message_text(
-                    text=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG,
-                    chat_id=update.from_user.id,
-                    message_id=a.message_id,
-                    disable_web_page_preview=True
-                )
-            try:
-                os.remove(after_download_path)
-                os.remove(thumb_image_path)
-            except:
-                pass
+                thumb=thumb_image_path,
+                reply_to_message_id=update.id
+            )
+            await update.message.edit_caption(
+                caption=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG,
+                parse_mode=enums.ParseMode.HTML
+            )
+        try:
+            os.remove(after_download_path)
+            os.remove(thumb_image_path)
+        except:
+            pass
 
         else:
             is_w_f = False
