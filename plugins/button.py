@@ -224,9 +224,10 @@ async def youtube_dl_call_back(bot, update):
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
         file_size = os.stat(download_directory).st_size
-        if file_size > Config.TG_MAX_FILE_SIZE
+        if file_size > Config.TG_MAX_FILE_SIZE:
 
-    else:
+
+  
         # Split Large Files
         size = os.path.getsize(humanbytes)
         size = get_size(size)
@@ -235,7 +236,7 @@ async def youtube_dl_call_back(bot, update):
         filename = filename.replace('%25','_')
         filename = filename.replace(' ','_')
         logger.info(f"Large File. Size: {size} ! --- Spliting")
-        await q.edit_message_caption(
+        await update.edit_message_caption(
             "Telegram does not support uploading this file.\n"
             f"Detected File Size: {size} 😡\n"
             "\n🤖 trying to split the files 🌝🌝🌚"
@@ -245,7 +246,7 @@ async def youtube_dl_call_back(bot, update):
         totlaa_sleif.sort()
         number_of_files = len(totlaa_sleif)
         logger.info(totlaa_sleif)
-        await q.edit_message_caption(
+        await update.edit_message_caption(
             f"Detected File Size: {size} 😡\n"
             f"<code>{filename}</code> splitted into {number_of_files} files.\n"
             "Trying to upload to Telegram, now ..."
