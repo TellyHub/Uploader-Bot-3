@@ -181,8 +181,11 @@ async def echo(bot, update):
                 "video", format_id, format_ext, randem)
             ikeyboard = [
                 InlineKeyboardButton(
-                    "[" + format_string + "] (" + format_ext + approx_file_size + ")",
+                    "🎬 " + format_string + " " + format_ext + " " + approx_file_size + " ",
                     callback_data=(cb_string_video).encode("UTF-8")
+                #InlineKeyboardButton(
+                    #"[" + format_string + "] (" + format_ext + approx_file_size + ")",
+                    #callback_data=(cb_string_video).encode("UTF-8")
                 )
             ]
             inline_keyboard.append(ikeyboard)
