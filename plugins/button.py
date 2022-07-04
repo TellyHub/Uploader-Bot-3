@@ -190,64 +190,10 @@ async def youtube_dl_call_back(bot, update):
         stderr=asyncio.subprocess.PIPE,
     )
     # Wait for the subprocess to finish
-    stdout, stderr = await process.communicate()
-    e_response = stderr.decode().strip()
-    t_response = stdout.decode().strip()
-    logger.info(e_response)
-    logger.info(t_response)
-    ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
-    if e_response and ad_string_to_replace in e_response:
-        error_message = e_response.replace(ad_string_to_replace, "")
-        await update.message.edit_caption(
-            parse_mode=enums.ParseMode.HTML,
-            text=error_message
-        )
-        Config.ONE_BY_ONE.remove(update.from_user.id)
-        total_req_get = total_req
-        b_json["users"].pop(user_count - 1)
-        b_json["users"].append({
-             "user_id": "{}".format(update.from_user.id),
-             "total_req": "{}".format(int(total_req_get)),
-             "exp_req": "{}".format(datetime.now())
-        })
-        with open("backup.json", "w", encoding="utf8") as outfile:
-              json.dump(b_json, outfile, ensure_ascii=False)
-        return False
-
-    if t_response:
-        logger.info(t_response)
-        try:
-            os.remove(save_ytdl_json_path)
-        except FileNotFoundError as exc:
-            pass
-        
-        end_one = datetime.now()
-        time_taken_for_download = (end_one -start).seconds
-        file_size = os.stat(download_directory).st_size
-        if file_size > Config.TG_MAX_FILE_SIZE:
-
-        LOGGER.info("TODO")
-        d_f_s = humanbytes(os.path.getsize(local_file_name))
-        i_m_s_g = await message.reply_text(
-            "Telegram does not support uploading this file.\n"
-             f"Detected File Size: {d_f_s} 😡\n"
-             "\n🤖 trying to split the files 🌝🌝🌚"
-        )
-        splitted_dir = await split_large_files(local_file_name)
-        totlaa_sleif = os.listdir(splitted_dir)
-        totlaa_sleif.sort()
-        number_of_files = len(totlaa_sleif)
-        LOGGER.info(totlaa_sleif)
-        ba_se_file_name = os.path.basename(local_file_name)
-        await i_m_s_g.edit_text(
-            f"Detected File Size: {d_f_s} 😡\n"
-            f"<code>{ba_se_file_name}</code> splitted into {number_of_files} files.\n"
-            "Trying to upload to Telegram, now ..."
-        )
-  
 
 
-    else:
+
+        else:
             is_w_f = False
             '''images = await generate_screen_shots(
                 download_directory,
