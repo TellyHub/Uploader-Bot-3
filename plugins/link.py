@@ -47,14 +47,11 @@ def get_link(bot, update):
             chat_id=update.from_user.id,
             message_id=a.id
         )
-        url = "https://transfer.sh/{}.{}".format(str(update.from_user.id), str(download_extension))
-        max_days = "5"
-        command_to_exec = [
+        url= f'''https://{t_response_ray}.gofile.io/uploadFile'''
+        command_to_exec=[
             "curl",
-            # "-H", 'Max-Downloads: 1',
-            "-H", 'Max-Days: 5', # + max_days + '',
-            "--upload-file", after_download_file_name,
-            url
+            "-F", f"file=@\"{after_download_file_name}\"", url
+
         ]
         bot.edit_message_text(
             text=Translation.UPLOAD_START,
