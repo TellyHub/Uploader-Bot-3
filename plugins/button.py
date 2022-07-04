@@ -234,6 +234,7 @@ async def youtube_dl_call_back(bot, update):
         await bot.send_message(
             text=Translation.ANNO_UPLOAD,
             chat_id=update.chat.id,
+            parse_mode=enums.ParseMode.HTML,
             reply_to_message_id=update.id
         )
         try:
@@ -256,10 +257,9 @@ async def youtube_dl_call_back(bot, update):
                chat_id=update.chat.id, 
 
                text=Translation.AFTER_GET_LINK.format(t_response_ray[25], t_response_ray[-2], t_response_ray[15]), 
-               parse_mode="html", 
+               parse_mode=enums.ParseMode.HTML,
                reply_markup=DO_LINK, 
-               reply_to_message_id=update.id,
-               disable_web_page_preview=True
+               reply_to_message_id=update.id
         )
         
         try:
