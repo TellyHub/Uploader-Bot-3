@@ -142,13 +142,7 @@ async def upload_single_file(
         os.rename(local_file_name, cfn)
         local_file_name = cfn
     start_time = time.time()
-    #
-    thumbnail_location = os.path.join(
-        Config.DOWNLOAD_LOCATION,
-        "thumbnails",
-        str(from_user) + ".jpg"
-    )
-    logger.info(thumbnail_location)
+
     #
     message_for_progress_display = message
     if not edit_media:
