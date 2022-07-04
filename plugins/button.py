@@ -224,48 +224,32 @@ async def youtube_dl_call_back(bot, update):
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
         file_size = os.stat(download_directory).st_size
-        if file_size > Config.TG_MAX_FILE_SIZE:
-            url = "https://api.anonfiles.com/upload"
-            command_to_exec = [
-            "curl",
-            "-F", f"file=@\"Tellybots\"", url
-        ]
-        
-        await update.message.edit_caption(
-            caption=Translation.ANNO_UPLOAD,
-            
-            parse_mode=enums.ParseMode.HTML
-        )
-        try:
-            logger.info(command_to_exec)
-            t_response = subprocess.check_output(command_to_exec, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as exc:
-            logger.info("Status : FAIL", exc.returncode, exc.output)
-            await update.message.edit_caption(
-                
-                caption=exc.output.decode("UTF-8")
-            )
-            return False
-        else:
-            logger.info(t_response)
-            t_response_array = t_response.decode("UTF-8").split("\n")[-1].strip()
-            #t_response_ray = re.findall("(?P<url>https?://[^\s]+)", t_response_array)
-            t_response_ray = t_response_array.rsplit('"') 
-            DO_LINK = InlineKeyboardMarkup([ [InlineKeyboardButton("Download Link", url=t_response_ray[11])], ]) 
-        await update.message.edit_caption(
-               
+        if file_size > Config.TG_MAX_FILE_SIZE
 
-               caption=Translation.AFTER_GET_LINK.format(t_response_ray[25], t_response_ray[-2], t_response_ray[15]), 
-               parse_mode=enums.ParseMode.HTML,
-               reply_markup=DO_LINK
+    else:
+        # Split Large Files
+        size = os.path.getsize(humanbytes)
+        size = get_size(size)
+        filename = os.path.basename(custom_file_name)
+        filename = filename.replace('%40','@')
+        filename = filename.replace('%25','_')
+        filename = filename.replace(' ','_')
+        logger.info(f"Large File. Size: {size} ! --- Spliting")
+        await q.edit_message_caption(
+            "Telegram does not support uploading this file.\n"
+            f"Detected File Size: {size} 😡\n"
+            "\n🤖 trying to split the files 🌝🌝🌚"
         )
-        
-        try:
-            os.remove(tmp_directory_for_each_user)
-            shutil.rmtree(download_location)
-        except:
-            pass
-
+        splitted_dir = await split_large_files(cfname)
+        totlaa_sleif = os.listdir(splitted_dir)
+        totlaa_sleif.sort()
+        number_of_files = len(totlaa_sleif)
+        logger.info(totlaa_sleif)
+        await q.edit_message_caption(
+            f"Detected File Size: {size} 😡\n"
+            f"<code>{filename}</code> splitted into {number_of_files} files.\n"
+            "Trying to upload to Telegram, now ..."
+        )
 
         else:
             is_w_f = False
