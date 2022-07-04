@@ -26,6 +26,7 @@ from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
 from plugins.database.database import db
 from PIL import Image
 from plugins.functions.ran_text import random_char
+from pyrogram.types import *
 
 async def youtube_dl_call_back(bot, update):
     cb_data = update.data
@@ -84,7 +85,7 @@ async def youtube_dl_call_back(bot, update):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    await update.message.edit_caption(
+    await i_m_s_g.edit_caption(
         caption=Translation.DOWNLOAD_START,
         parse_mode=enums.ParseMode.HTML
     )
@@ -97,48 +98,7 @@ async def youtube_dl_call_back(bot, update):
         os.makedirs(tmp_directory_for_each_user)
     download_directory = tmp_directory_for_each_user + "/" + custom_file_name
     command_to_exec = []
-    command_to_exec = []
-    with open("backup.json", "r", encoding="utf8") as f:
-                  b_json = json.load(f)
-    if update.from_user.id in Config.ONE_BY_ONE:
-      for users in b_json["users"]:
-        user = users.get("user_id")
-        exp_req = users.get("exp_req")
-        if int(update.from_user.id) == int(user):
-          if datetime.strptime(exp_req, '%Y-%m-%d %H:%M:%S.%f') > datetime.now():
-            rem = datetime.strptime(exp_req, '%Y-%m-%d %H:%M:%S.%f') - datetime.now()
-            await update.message.edit_text("😴 Please wait {} for next process.".format(datetime.strptime(str(rem), '%H:%M:%S.%f').strftime('%H Hrs %M Mins %S Sec')))
-            return
-    Config.ONE_BY_ONE.append(update.from_user.id)
-    if not update.from_user.id in Config.TODAY_USERS:
-       Config.TODAY_USERS.append(update.from_user.id)
-       exp_date = datetime.now()
-       exp_req = exp_date + timedelta(minutes=int(Config.TIME_GAP))
-       fir = 0
-       b_json["users"].append({
-         "user_id": "{}".format(update.from_user.id),
-         "total_req": "{}".format(fir),
-         "exp_req": "{}".format(exp_req)
-       })
-       with open("backup.json", "w", encoding="utf8") as outfile:
-               json.dump(b_json, outfile, ensure_ascii=False)
-    user_count = 0
-    for users in b_json["users"]:
-      user = users.get("user_id")
-      total_req = users.get("total_req")
-      user_count = user_count + 1
-      #if int(update.from_user.id) == int(user):
-      # if int(total_req) > 3:
-      #    await update.reply_text("😴 You reached per day limit. send /me to know renew time.")
-      #    return
-    b_json["users"].pop(user_count - 1)
-    b_json["users"].append({
-         "user_id": "{}".format(update.from_user.id),
-         "total_req": "{}".format(int(total_req) + 1),
-         "exp_req": "{}".format(datetime.now() + timedelta(minutes=int(Config.TIME_GAP)))
-    })
-    with open("backup.json", "w", encoding="utf8") as outfile:
-          json.dump(b_json, outfile, ensure_ascii=False)
+
     if tg_send_type == "audio":
         command_to_exec = [
             "yt-dlp",
@@ -240,11 +200,11 @@ async def upload_to_tg(
     force_doc=False,
     cfn=None
 ):
-    LOGGER.info(local_file_name)
+    logger.info(local_file_name)
     base_file_name = os.path.basename(local_file_name)
     caption_str = custom_caption
     if not (caption_str or edit_media):
-        LOGGER.info("fall-back to default file_name")
+        logger.info("fall-back to default file_name")
         caption_str = "<code>"
         caption_str += base_file_name
         caption_str += "</code>"
@@ -258,7 +218,7 @@ async def upload_to_tg(
         directory_contents = os.listdir(local_file_name)
         directory_contents.sort()
         # number_of_files = len(directory_contents)
-        LOGGER.info(directory_contents)
+        logger.info(directory_contents)
         new_m_esg = message
         if not message.photo:
             new_m_esg = await message.reply_text(
@@ -279,8 +239,8 @@ async def upload_to_tg(
                 cfn=cfn
             )
     else:
-        if os.path.getsize(local_file_name) > TG_MAX_FILE_SIZE:
-            LOGGER.info("TODO")
+        if os.path.getsize(local_file_name) > Config.TG_MAX_FILE_SIZE:
+            logger.info("TODO")
             d_f_s = humanbytes(os.path.getsize(local_file_name))
             i_m_s_g = await message.reply_text(
                 "Telegram does not support uploading this file.\n"
@@ -291,7 +251,7 @@ async def upload_to_tg(
             totlaa_sleif = os.listdir(splitted_dir)
             totlaa_sleif.sort()
             number_of_files = len(totlaa_sleif)
-            LOGGER.info(totlaa_sleif)
+            logger.info(totlaa_sleif)
             ba_se_file_name = os.path.basename(local_file_name)
             await i_m_s_g.edit_text(
                 f"Detected File Size: {d_f_s} 😡\n"
@@ -320,7 +280,7 @@ async def upload_to_tg(
                 9
             )
             logger.info(images)'''
-            await update.message.edit_caption(
+            await Message.message.edit_caption(
                 caption=Translation.UPLOAD_START,
                 parse_mode=enums.ParseMode.HTML
             )
@@ -385,7 +345,7 @@ async def upload_to_tg(
             elif tg_send_type == "vm":
                 width, duration = await Mdata02(download_directory)
                 thumbnail = await Gthumb02(bot, update, duration, download_directory)
-                await update.message.reply_video_note(
+                await Message.message.reply_video_note(
                     #chat_id=update.message.chat.id,
                     video_note=download_directory,
                     duration=duration,
