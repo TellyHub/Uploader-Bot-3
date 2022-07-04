@@ -86,7 +86,7 @@ async def youtube_dl_call_back(bot, update):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    await i_m_s_g.edit_caption(
+    await update.message.edit_caption(
         caption=Translation.DOWNLOAD_START,
         parse_mode=enums.ParseMode.HTML
     )
