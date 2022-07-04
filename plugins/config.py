@@ -61,3 +61,6 @@ class Config(object):
     TODAY_USERS = []
     TIME_GAP = int(os.environ.get("TIME_GAP", 2))
     RATE_MSG_ID = int(os.environ.get("RATE_MSG_ID", 123))
+    SP_LIT_ALGO_RITH_M = Config.SP_LIT_ALGO_RITH_M
+    DIS_ABLE_ST_GFC_COMMAND_I = Config.DIS_ABLE_ST_GFC_COMMAND_I
+    SLEEP_THRES_HOLD = int(Config.SLEEP_THRES_HOLD)
