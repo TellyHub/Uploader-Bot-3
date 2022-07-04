@@ -18,6 +18,7 @@ import subprocess
 from datetime import datetime, timedelta
 from pyrogram import enums 
 from plugins.config import Config
+from plugins.upload import *
 from plugins.script import Translation
 from plugins.thumbnail import *
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
