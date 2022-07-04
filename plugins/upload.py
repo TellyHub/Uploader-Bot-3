@@ -36,15 +36,25 @@ async def upload_to_tg(
     local_file_name,
     from_user,
     dict_contatining_uploaded_files,
-    client,
     edit_media=False,
-    yt_thumb=None,
+    custom_caption=None,
+    force_doc=False,
+    cfn=None
 ):
+    logger.info(local_file_name)
     base_file_name = os.path.basename(local_file_name)
-    caption_str = ""
-    caption_str += "<code>"
-    caption_str += base_file_name
-    caption_str += "</code>"
+    caption_str = custom_caption
+    if not (caption_str or edit_media):
+        logger.info("fall-back to default file_name")
+        caption_str = "<code>"
+        caption_str += base_file_name
+        caption_str += "</code>"
+    # caption_str += "\n\n"
+    # caption_str += "<a href='tg://user?id="
+    # caption_str += str(from_user)
+    # caption_str += "'>"
+    # caption_str += "Here is the file to the link you sent"
+    # caption_str += "</a>"
     if os.path.isdir(local_file_name):
         directory_contents = os.listdir(local_file_name)
         directory_contents.sort()
@@ -53,7 +63,7 @@ async def upload_to_tg(
         new_m_esg = message
         if not message.photo:
             new_m_esg = await message.reply_text(
-                f"<b>Found</b> <code>{len(directory_contents)}</code> <b>Files <a href='tg://user?id={from_user}'>📡</a></b>",
+                "Found {} files".format(len(directory_contents)),
                 quote=True
                 # reply_to_message_id=message.message_id
             )
@@ -64,9 +74,10 @@ async def upload_to_tg(
                 os.path.join(local_file_name, single_file),
                 from_user,
                 dict_contatining_uploaded_files,
-                client,
                 edit_media,
-                yt_thumb,
+                caption_str,
+                force_doc=force_doc,
+                cfn=cfn
             )
     else:
         if os.path.getsize(local_file_name) > Config.TG_MAX_FILE_SIZE:
@@ -86,7 +97,7 @@ async def upload_to_tg(
             await i_m_s_g.edit_text(
                 f"Detected File Size: {d_f_s} 😡\n"
                 f"<code>{ba_se_file_name}</code> splitted into {number_of_files} files.\n"
-                "Trying to upload to Telegram, now ..."
+                "trying to upload to Telegram, now ..."
             )
             for le_file in totlaa_sleif:
                 # recursion: will this FAIL somewhere?
@@ -95,27 +106,21 @@ async def upload_to_tg(
                     os.path.join(splitted_dir, le_file),
                     from_user,
                     dict_contatining_uploaded_files,
-                    client,
-                    edit_media,
-                    yt_thumb,
+                    force_doc=force_doc,
+                    cfn=cfn
                 )
         else:
-            sizze = os.path.getsize(local_file_name)
             sent_message = await upload_single_file(
                 message,
                 local_file_name,
                 caption_str,
                 from_user,
-                client,
                 edit_media,
-                yt_thumb,
+                force_doc,
+                cfn
             )
             if sent_message is not None:
-                dict_contatining_uploaded_files[
-                    os.path.basename(local_file_name)
-                ] = sent_message.message_id
-            else:
-                return
+                dict_contatining_uploaded_files[os.path.basename(local_file_name)] = sent_message.message_id
     # await message.delete()
     return dict_contatining_uploaded_files
 
