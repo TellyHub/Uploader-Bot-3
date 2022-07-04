@@ -168,27 +168,7 @@ async def echo(bot, update):
             json.dump(response_json, outfile, ensure_ascii=False)
         # logger.info(response_json)
         inline_keyboard = []
-        inline_keyboard = []
-        for formats in response_json["formats"]:
-            format_id = formats["format_id"]
-            format_string = formats["format"]
-            format_ext = formats["ext"]
-            approx_file_size = ""
-            if "filesize" in formats:
-                approx_file_size = humanbytes(formats["filesize"])
-            ikeyboard = [
-                InlineKeyboardButton(
-                    "[" + format_string + "] (" + format_ext + " - " + approx_file_size + ")",
-                    callback_data=format_id + ":" + format_ext, randem
-                )
-            ]
-            inline_keyboard.append(ikeyboard)
-        inline_keyboard.append([
-            InlineKeyboardButton("MP3 " + "(" + "medium" + ")", callback_data="5:mp3")
-        ])
-        inline_keyboard.append([
-            InlineKeyboardButton("MP3 " + "(" + "best" + ")", callback_data="0:mp3")
-        ])
+
 
         
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
