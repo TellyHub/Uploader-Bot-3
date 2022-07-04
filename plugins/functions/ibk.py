@@ -1,4 +1,16 @@
-from plugins.Config import Config 
+# @Tellybots
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+import asyncio
+import os
+import time
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
+from plugins.config import Config
 
 
 async def split_large_files(input_file):
