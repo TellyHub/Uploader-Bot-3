@@ -230,21 +230,20 @@ async def youtube_dl_call_back(bot, update):
             "curl",
             "-F", f"file=@\"{after_download_file_name}\"", url
         ]
-        await a.delete()
-        up = await bot.send_message(
+        
+        await bot.send_message(
             text=Translation.ANNO_UPLOAD,
             chat_id=update.chat.id,
-            reply_to_message_id=update.message_id
+            reply_to_message_id=update.id
         )
         try:
             logger.info(command_to_exec)
             t_response = subprocess.check_output(command_to_exec, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as exc:
             logger.info("Status : FAIL", exc.returncode, exc.output)
-            await bot.edit_message_text(
-                chat_id=update.chat.id,
-                text=exc.output.decode("UTF-8"),
-                message_id=up.message_id
+            await update.message.edit_caption(
+                
+                caption=exc.output.decode("UTF-8")
             )
             return False
         else:
@@ -259,10 +258,10 @@ async def youtube_dl_call_back(bot, update):
                text=Translation.AFTER_GET_LINK.format(t_response_ray[25], t_response_ray[-2], t_response_ray[15]), 
                parse_mode="html", 
                reply_markup=DO_LINK, 
-               reply_to_message_id=update.message_id,
+               reply_to_message_id=update.id,
                disable_web_page_preview=True
         )
-        await up.delete()
+        
         try:
             os.remove(tmp_directory_for_each_user)
             shutil.rmtree(download_location)
