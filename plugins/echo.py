@@ -191,7 +191,7 @@ async def echo(bot, update):
             InlineKeyboardButton("MP3 " + "(" + "best" + ")", callback_data="0:mp3")
         ])
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
-        LOGGER.info(reply_markup)
+        logger.info(reply_markup)
         
        # reply_markup = InlineKeyboardMarkup(inline_keyboard)
         await chk.delete(True)
