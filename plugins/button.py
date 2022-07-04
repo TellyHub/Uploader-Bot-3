@@ -226,31 +226,26 @@ async def youtube_dl_call_back(bot, update):
         file_size = os.stat(download_directory).st_size
         if file_size > Config.TG_MAX_FILE_SIZE:
 
-
-  
-        # Split Large Files
-        size = os.path.getsize(humanbytes)
-        size = get_size(size)
-        filename = os.path.basename(custom_file_name)
-        filename = filename.replace('%40','@')
-        filename = filename.replace('%25','_')
-        filename = filename.replace(' ','_')
-        logger.info(f"Large File. Size: {size} ! --- Spliting")
-        await update.edit_message_caption(
+        LOGGER.info("TODO")
+        d_f_s = humanbytes(os.path.getsize(local_file_name))
+        i_m_s_g = await message.reply_text(
             "Telegram does not support uploading this file.\n"
-            f"Detected File Size: {size} 😡\n"
-            "\n🤖 trying to split the files 🌝🌝🌚"
+             f"Detected File Size: {d_f_s} 😡\n"
+             "\n🤖 trying to split the files 🌝🌝🌚"
         )
-        splitted_dir = await split_large_files(cfname)
+        splitted_dir = await split_large_files(local_file_name)
         totlaa_sleif = os.listdir(splitted_dir)
         totlaa_sleif.sort()
         number_of_files = len(totlaa_sleif)
-        logger.info(totlaa_sleif)
-        await update.edit_message_caption(
-            f"Detected File Size: {size} 😡\n"
-            f"<code>{filename}</code> splitted into {number_of_files} files.\n"
+        LOGGER.info(totlaa_sleif)
+        ba_se_file_name = os.path.basename(local_file_name)
+        await i_m_s_g.edit_text(
+            f"Detected File Size: {d_f_s} 😡\n"
+            f"<code>{ba_se_file_name}</code> splitted into {number_of_files} files.\n"
             "Trying to upload to Telegram, now ..."
         )
+  
+
 
     else:
             is_w_f = False
