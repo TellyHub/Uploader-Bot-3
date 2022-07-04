@@ -24,7 +24,7 @@ from plugins.functions.display_progress import (
     humanbytes
 )
 from plugins.functions.help_Nekmo_ffmpeg import *
-
+from plugins.functions.ibk import *
 from plugins.functions.copy_similar_file import copy_file
 from plugins.config import Config 
 
