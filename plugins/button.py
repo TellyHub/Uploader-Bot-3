@@ -189,7 +189,6 @@ async def youtube_dl_call_back(bot, update):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-    # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
@@ -198,157 +197,34 @@ async def youtube_dl_call_back(bot, update):
     ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
-        await update.message.edit_caption(caption=error_message)
+        await update.message.edit_caption(
+            caption=error_message
+        )
         return False, None
     if t_response:
+        # LOGGER.info(t_response)
+        # os.remove(save_ytdl_json_path)
+        end_one = datetime.now()
+        time_taken_for_download = (end_one -start).seconds
         dir_contents = len(os.listdir(tmp_directory_for_each_user))
-        await update.message.edit_caption(caption=f"found {dir_contents} files")
+        # dir_contents.sort()
+        await update.message.edit_caption(
+            caption=f"found {dir_contents} files"
+        )
         user_id = update.from_user.id
         #
-        LOGGER.info(tmp_directory_for_each_user)
-        for a, _, c in os.walk(tmp_directory_for_each_user):
-            for d in c:
-                e = os.path.join(a, d)
-                gaut_am = os.path.basename(e)
-                fi_le = e
-                if cf_name:
-                    fi_le = os.path.join(a, cf_name)
-                    os.rename(e, fi_le)
-                    gaut_am = os.path.basename(fi_le)
-
-        is_cloud = False
-        comd = update.message.reply_to_message.text
-        LOGGER.info(comd)
-        user_command = comd.split()[0]
-
-        else:
-            final_response = await upload_to_tg(
-                update.message,
-                tmp_directory_for_each_user,
-                user_id,
-                {},
-                bot,
-                True,
-                yt_thumb=thumb_image,
-            )
-        LOGGER.info(final_response)
+        final_response = await upload_to_tg(
+            update.message,
+            tmp_directory_for_each_user,
+            user_id,
+            {},
+            True,
+            description
+        )
+        logger.info(final_response)
         #
         try:
             shutil.rmtree(tmp_directory_for_each_user)
         except:
             pass
-
-
-        else:
-            is_w_f = False
-            '''images = await generate_screen_shots(
-                download_directory,
-                tmp_directory_for_each_user,
-                is_w_f,
-                Config.DEF_WATER_MARK_FILE,
-                300,
-                9
-            )
-            logger.info(images)'''
-            await update.message.edit_caption(
-                caption=Translation.UPLOAD_START,
-                parse_mode=enums.ParseMode.HTML
-            )
-
-            # ref: message from @Sources_codes
-            start_time = time.time()
-            if (await db.get_upload_as_doc(update.from_user.id)) is False:
-                thumbnail = await Gthumb01(bot, update)
-                await update.message.reply_document(
-                    #chat_id=update.message.chat.id,
-                    document=download_directory,
-                    thumb=thumbnail,
-                    caption=description,
-                    parse_mode=enums.ParseMode.HTML,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
-                )
-            else:
-                 width, height, duration = await Mdata01(download_directory)
-                 thumb_image_path = await Gthumb02(bot, update, duration, download_directory)
-                 await update.message.reply_video(
-                    #chat_id=update.message.chat.id,
-                    video=download_directory,
-                    caption=description,
-                    duration=duration,
-                    width=width,
-                    height=height,
-                    supports_streaming=True,
-                    parse_mode=enums.ParseMode.HTML,
-                    thumb=thumb_image_path,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
-                )
-            if tg_send_type == "audio":
-                duration = await Mdata03(download_directory)
-                thumbnail = await Gthumb01(bot, update)
-                await update.message.reply_audio(
-                    #chat_id=update.message.chat.id,
-                    audio=download_directory,
-                    caption=description,
-                    parse_mode=enums.ParseMode.HTML,
-                    duration=duration,
-                    thumb=thumbnail,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
-                )
-            elif tg_send_type == "vm":
-                width, duration = await Mdata02(download_directory)
-                thumbnail = await Gthumb02(bot, update, duration, download_directory)
-                await update.message.reply_video_note(
-                    #chat_id=update.message.chat.id,
-                    video_note=download_directory,
-                    duration=duration,
-                    length=width,
-                    thumb=thumbnail,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
-                )
-            else:
-                logger.info("Did this happen? :\\")
-            end_two = datetime.now()
-            time_taken_for_upload = (end_two - end_one).seconds
-            try:
-                shutil.rmtree(tmp_directory_for_each_user)
-                os.remove(thumbnail)
-            except:
-                pass
-            await update.message.edit_caption(
-                caption=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload),
-                parse_mode=enums.ParseMode.HTML
-            )
-            Config.ONE_BY_ONE.remove(update.from_user.id)
-            total_req_get = total_req
-            b_json["users"].pop(user_count - 1)
-            b_json["users"].append({
-                 "user_id": "{}".format(update.from_user.id),
-                 "total_req": "{}".format(int(total_req_get)),
-                 "exp_req": "{}".format(datetime.now())
-            })
-            with open("backup.json", "w", encoding="utf8") as outfile:
-                  json.dump(b_json, outfile, ensure_ascii=False)
+    # Wait
