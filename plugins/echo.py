@@ -122,7 +122,7 @@ async def echo(bot, update):
     logger.info(command_to_exec)
     chk = await bot.send_message(
             chat_id=update.chat.id,
-            text=Translation.Check_Link,
+            text=Translation.CHECK_LINK,
             disable_web_page_preview=True,
             reply_to_message_id=update.id,
             parse_mode=enums.ParseMode.HTML
