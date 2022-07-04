@@ -231,11 +231,10 @@ async def youtube_dl_call_back(bot, update):
             "-F", f"file=@\"Tellybots\"", url
         ]
         
-        await bot.send_message(
-            text=Translation.ANNO_UPLOAD,
-            chat_id=update.chat.id,
-            parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.id
+        await update.message.edit_caption(
+            caption=Translation.ANNO_UPLOAD,
+            
+            parse_mode=enums.ParseMode.HTML
         )
         try:
             logger.info(command_to_exec)
@@ -253,13 +252,12 @@ async def youtube_dl_call_back(bot, update):
             #t_response_ray = re.findall("(?P<url>https?://[^\s]+)", t_response_array)
             t_response_ray = t_response_array.rsplit('"') 
             DO_LINK = InlineKeyboardMarkup([ [InlineKeyboardButton("Download Link", url=t_response_ray[11])], ]) 
-        await bot.send_message(
-               chat_id=update.chat.id, 
+        await update.message.edit_caption(
+               
 
-               text=Translation.AFTER_GET_LINK.format(t_response_ray[25], t_response_ray[-2], t_response_ray[15]), 
+               caption=Translation.AFTER_GET_LINK.format(t_response_ray[25], t_response_ray[-2], t_response_ray[15]), 
                parse_mode=enums.ParseMode.HTML,
-               reply_markup=DO_LINK, 
-               reply_to_message_id=update.id
+               reply_markup=DO_LINK
         )
         
         try:
