@@ -264,7 +264,7 @@ async def youtube_dl_call_back(bot, update):
         )
         await up.delete()
         try:
-            os.remove(after_download_file_name)
+            os.remove(tmp_directory_for_each_user)
             shutil.rmtree(download_location)
         except:
             pass
