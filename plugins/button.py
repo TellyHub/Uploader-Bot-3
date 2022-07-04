@@ -26,6 +26,7 @@ from pyrogram.types import InputMediaPhoto
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
 from plugins.database.database import db
 from PIL import Image
+from plugins.functions.extractor import *
 from plugins.functions.help_Nekmo_ffmpeg import *
 from plugins.run_cmnd import *
 from plugins.functions.ibk import *
