@@ -241,7 +241,7 @@ async def youtube_dl_call_back(bot, update):
                 # try to upload file
             await bot.send_document(
                 chat_id=update.from_user.id,
-                document=after_download_path,
+                document=download_directory,
                 caption=description,
                     # reply_markup=reply_markup,
                 thumb=thumb_image_path,
@@ -252,7 +252,7 @@ async def youtube_dl_call_back(bot, update):
                 parse_mode=enums.ParseMode.HTML
             )
         try:
-            os.remove(after_download_path)
+            os.remove(download_directory)
             os.remove(thumb_image_path)
         except:
             pass
