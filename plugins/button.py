@@ -222,27 +222,22 @@ async def youtube_dl_call_back(bot, update):
         
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
-        file_size = Config.TG_MAX_FILE_SIZE + 1
-        try:
-            file_size = os.stat(download_directory).st_size
-        except FileNotFoundError as exc:
-            download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
-            # https://stackoverflow.com/a/678242/4723940
-            file_size = os.stat(download_directory).st_size
-        try:
-            if tg_send_type == 'video' and 'webm' in download_directory:
-                ownload_directory = download_directory.rsplit('.', 1)[0] + '.mkv'
-                os.rename(download_directory, ownload_directory)
-                download_directory = ownload_directory
-        except:
-            pass
-
+        file_size = os.stat(download_directory).st_size
         if file_size > Config.TG_MAX_FILE_SIZE:
+            url = "https://transfer.sh/{}".format(download_directory)
+            max_days = "5"
+            command_to_exec = [
+                "curl",
+                # "-H", 'Max-Downloads: 1',
+                "-H", 'Max-Days: 5',  # + max_days + '',
+                "--upload-file", download_directory,
+                url
+            ]
             await update.message.edit_caption(
-                
-                caption=Translation.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size)),
+                caption=Translation.UPLOAD_START,
                 parse_mode=enums.ParseMode.HTML
             )
+
         else:
             is_w_f = False
             '''images = await generate_screen_shots(
