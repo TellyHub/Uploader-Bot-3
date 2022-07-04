@@ -163,3 +163,11 @@ Free users only 1 request per 30 minutes.
     CHECK_LINK = "Pʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ʟɪɴᴋ ⌛"
     #AFTER_GET_DL_LINK = "Direct Link <a href='{}'>Generated</a> valid for {} days.\n© @AnyDLBot"
 
+    YTDL_ERROR_MESSAGE = (
+        "Please report this issue on https://yt-dl.org/bug . "
+        "Make sure you are using the latest version; see "
+        " https://yt-dl.org/update  on how to update. "
+        "Be sure to call youtube-dl with the --verbose flag "
+        "and include its complete output."
+    )
+    ISOAYD_PREMIUM_VIDEOS = "video is only available for registered users"
