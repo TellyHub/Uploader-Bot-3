@@ -270,104 +270,172 @@ async def upload_to_tg(
                 )
         
         else:
-            is_w_f = False
-            '''images = await generate_screen_shots(
-                download_directory,
-                tmp_directory_for_each_user,
-                is_w_f,
-                Config.DEF_WATER_MARK_FILE,
-                300,
-                9
-            )
-            logger.info(images)'''
-            await Message.message.edit_caption(
-                caption=Translation.UPLOAD_START,
-                parse_mode=enums.ParseMode.HTML
-            )
 
-            # ref: message from @Sources_codes
-            start_time = time.time()
-            if (await db.get_upload_as_doc(update.from_user.id)) is False:
-                thumbnail = await Gthumb01(bot, update)
-                await update.message.reply_document(
-                    #chat_id=update.message.chat.id,
-                    document=download_directory,
-                    thumb=thumbnail,
-                    caption=description,
-                    parse_mode=enums.ParseMode.HTML,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
-                )
-            else:
-                 width, height, duration = await Mdata01(download_directory)
-                 thumb_image_path = await Gthumb02(bot, update, duration, download_directory)
-                 await update.message.reply_video(
-                    #chat_id=update.message.chat.id,
-                    video=download_directory,
-                    caption=description,
-                    duration=duration,
+
+
+async def upload_single_file(
+    message,
+    local_file_name,
+    caption_str,
+    from_user,
+    edit_media,
+    force_doc=False,
+    cfn=None
+):
+    await asyncio.sleep(Config.EDIT_SLEEP_TIME_OUT)
+    sent_message = None
+    if cfn:
+        os.rename(local_file_name, cfn)
+        local_file_name = cfn
+    start_time = time.time()
+    #
+    thumbnail_location = os.path.join(
+        Config.DOWNLOAD_LOCATION,
+        "thumbnails",
+        str(from_user) + ".jpg"
+    )
+    logger.info(thumbnail_location)
+    #
+    message_for_progress_display = message
+    if not edit_media:
+        message_for_progress_display = await message.reply_text(
+            "starting upload of {}".format(os.path.basename(local_file_name))
+        )
+
+    if local_file_name.upper().endswith((
+        "M4V", "MP4", "MOV", "FLV", "WMV", "3GP", "MPEG", "WEBM", "MKV"
+    )) and not force_doc:
+        metadata = extractMetadata(createParser(local_file_name))
+        duration = 0
+        if metadata.has("duration"):
+            duration = metadata.get('duration').seconds
+        #
+        width = 0
+        height = 0
+        thumb_image_path = None
+        if os.path.exists(thumbnail_location):
+            thumb_image_path = await copy_file(
+                thumbnail_location,
+                os.path.dirname(os.path.abspath(local_file_name))
+            )
+        else:
+            thumb_image_path = await take_screen_shot(
+                local_file_name,
+                os.path.dirname(os.path.abspath(local_file_name)),
+                (duration / 2)
+            )
+            # get the correct width, height, and duration for videos greater than 10MB
+            if os.path.exists(thumb_image_path):
+                metadata = extractMetadata(createParser(thumb_image_path))
+                if metadata.has("width"):
+                    width = metadata.get("width")
+                if metadata.has("height"):
+                    height = metadata.get("height")
+                # resize image
+                # ref: https://t.me/PyrogramChat/44663
+                # https://stackoverflow.com/a/21669827/4723940
+                Image.open(thumb_image_path).convert(
+                    "RGB"
+                ).save(thumb_image_path)
+                img = Image.open(thumb_image_path)
+                # https://stackoverflow.com/a/37631799/4723940
+                img.resize((320, height))
+                img.save(thumb_image_path, "JPEG")
+                # https://pillow.readthedocs.io/en/3.1.x/reference/Image.html#create-thumbnails
+        #
+        thumb = None
+        if thumb_image_path is not None and os.path.isfile(thumb_image_path):
+            thumb = thumb_image_path
+        # send video
+        if edit_media and message.photo:
+            sent_message = await message.edit_media(
+                media=InputMediaVideo(
+                    media=local_file_name,
+                    thumb=thumb,
+                    caption=caption_str,
+                    parse_mode="html",
                     width=width,
                     height=height,
-                    supports_streaming=True,
-                    parse_mode=enums.ParseMode.HTML,
-                    thumb=thumb_image_path,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
-                )
-            if tg_send_type == "audio":
-                duration = await Mdata03(download_directory)
-                thumbnail = await Gthumb01(bot, update)
-                await update.message.reply_audio(
-                    #chat_id=update.message.chat.id,
-                    audio=download_directory,
-                    caption=description,
-                    parse_mode=enums.ParseMode.HTML,
                     duration=duration,
-                    thumb=thumbnail,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
+                    supports_streaming=True
                 )
-            elif tg_send_type == "vm":
-                width, duration = await Mdata02(download_directory)
-                thumbnail = await Gthumb02(bot, update, duration, download_directory)
-                await Message.message.reply_video_note(
-                    #chat_id=update.message.chat.id,
-                    video_note=download_directory,
+                # quote=True,
+            )
+        else:
+            sent_message = await message.reply_video(
+                video=local_file_name,
+                # quote=True,
+                caption=caption_str,
+                parse_mode="html",
+                duration=duration,
+                width=width,
+                height=height,
+                thumb=thumb,
+                supports_streaming=True,
+                disable_notification=True,
+                # reply_to_message_id=message.id,
+                progress=progress_for_pyrogram,
+                progress_args=(
+                    "trying to upload",
+                    message_for_progress_display,
+                    start_time
+                )
+            )
+        if thumb is not None:
+            os.remove(thumb)
+
+    elif local_file_name.upper().endswith((
+        "MP3", "M4A", "M4B", "FLAC", "WAV", "AIF", "OGG", "AAC", "DTS"
+    )) and not force_doc:
+        metadata = extractMetadata(createParser(local_file_name))
+        duration = 0
+        title = ""
+        artist = ""
+        if metadata.has("duration"):
+            duration = metadata.get('duration').seconds
+        if metadata.has("title"):
+            title = metadata.get("title")
+        if metadata.has("artist"):
+            artist = metadata.get("artist")
+        thumb_image_path = None
+        if os.path.isfile(thumbnail_location):
+            thumb_image_path = await copy_file(
+                thumbnail_location,
+                os.path.dirname(os.path.abspath(local_file_name))
+            )
+        thumb = None
+        if thumb_image_path is not None and os.path.isfile(thumb_image_path):
+            thumb = thumb_image_path
+        # send audio
+        if edit_media and message.photo:
+            sent_message = await message.edit_media(
+                media=InputMediaAudio(
+                    media=local_file_name,
+                    thumb=thumb,
+                    caption=caption_str,
+                    parse_mode="html",
                     duration=duration,
-                    length=width,
-                    thumb=thumbnail,
-                    #reply_to_message_id=update.id,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        Translation.UPLOAD_START,
-                        update.message,
-                        start_time
-                    )
+                    performer=artist,
+                    title=title
                 )
-            else:
-                logger.info("Did this happen? :\\")
-            end_two = datetime.now()
-            time_taken_for_upload = (end_two - end_one).seconds
-            try:
-                shutil.rmtree(tmp_directory_for_each_user)
-                os.remove(thumbnail)
-            except:
-                pass
-
-
-
+                # quote=True,
+            )
+        else:
+            sent_message = await message.reply_audio(
+                audio=local_file_name,
+                quote=True,
+                caption=caption_str,
+                parse_mode="html",
+                duration=duration,
+                performer=artist,
+                title=title,
+                thumb=thumb,
+                disable_notification=True,
+                # reply_to_message_id=message.id,
+                progress=progress_for_pyrogram,
+                progress_args=(
+                    "trying to upload",
+                    message_for_progress_display,
+                    start_time
+                )
+            )
