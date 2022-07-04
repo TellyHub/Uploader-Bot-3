@@ -167,7 +167,7 @@ async def echo(bot, update):
         with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
             json.dump(response_json, outfile, ensure_ascii=False)
         # logger.info(response_json)
-        inline_keyboard = []
+        #inline_keyboard = []
 
         inline_keyboard = []
         for formats in response_json["formats"]:
@@ -182,7 +182,7 @@ async def echo(bot, update):
             ikeyboard = [
                 InlineKeyboardButton(
                     "[" + format_string + "] (" + format_ext + " - " + approx_file_size + ")",
-                    callback_data=format_id + ":" + format_ext
+                    callback_data=(cb_string_video).encode("UTF-8")
                 )
             ]
             inline_keyboard.append(ikeyboard)
