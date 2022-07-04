@@ -250,9 +250,9 @@ async def youtube_dl_call_back(bot, update):
             f"Detected File Size: {size} 😡\n"
             f"<code>{filename}</code> splitted into {number_of_files} files.\n"
             "Trying to upload to Telegram, now ..."
-            )
+        )
 
-        else:
+    else:
             is_w_f = False
             '''images = await generate_screen_shots(
                 download_directory,
