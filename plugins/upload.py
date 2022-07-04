@@ -23,7 +23,7 @@ from plugins.functions.display_progress import (
     progress_for_pyrogram,
     humanbytes
 )
-from functions.help_Nekmo_ffmpeg import *
+from plugins.functions.help_Nekmo_ffmpeg import *
 from plugins.split_large_file import split_large_files
 from plugins.functions.copy_similar_file import copy_file
 from plugins.config import Config 
