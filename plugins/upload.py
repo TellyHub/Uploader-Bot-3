@@ -166,46 +166,13 @@ async def upload_single_file(
         #
         width = 0
         height = 0
-        thumb_image_path = None
-        if os.path.exists(thumbnail_location):
-            thumb_image_path = await copy_file(
-                thumbnail_location,
-                os.path.dirname(os.path.abspath(local_file_name))
-            )
-        else:
-            thumb_image_path = await take_screen_shot(
-                local_file_name,
-                os.path.dirname(os.path.abspath(local_file_name)),
-                (duration / 2)
-            )
-            # get the correct width, height, and duration for videos greater than 10MB
-            if os.path.exists(thumb_image_path):
-                metadata = extractMetadata(createParser(thumb_image_path))
-                if metadata.has("width"):
-                    width = metadata.get("width")
-                if metadata.has("height"):
-                    height = metadata.get("height")
-                # resize image
-                # ref: https://t.me/PyrogramChat/44663
-                # https://stackoverflow.com/a/21669827/4723940
-                Image.open(thumb_image_path).convert(
-                    "RGB"
-                ).save(thumb_image_path)
-                img = Image.open(thumb_image_path)
-                # https://stackoverflow.com/a/37631799/4723940
-                img.resize((320, height))
-                img.save(thumb_image_path, "JPEG")
-                # https://pillow.readthedocs.io/en/3.1.x/reference/Image.html#create-thumbnails
-        #
-        thumb = None
-        if thumb_image_path is not None and os.path.isfile(thumb_image_path):
-            thumb = thumb_image_path
+
         # send video
         if edit_media and message.photo:
             sent_message = await message.edit_media(
                 media=InputMediaVideo(
                     media=local_file_name,
-                    thumb=thumb,
+                    #thumb=thumb,
                     caption=caption_str,
                     #parse_mode="html",
                     width=width,
@@ -224,7 +191,7 @@ async def upload_single_file(
                 duration=duration,
                 width=width,
                 height=height,
-                thumb=thumb,
+                #thumb=thumb,
                 supports_streaming=True,
                 disable_notification=True,
                 # reply_to_message_id=message.id,
@@ -235,8 +202,7 @@ async def upload_single_file(
                     start_time
                 )
             )
-        if thumb is not None:
-            os.remove(thumb)
+        
 
     elif local_file_name.upper().endswith((
         "MP3", "M4A", "M4B", "FLAC", "WAV", "AIF", "OGG", "AAC", "DTS"
@@ -251,21 +217,13 @@ async def upload_single_file(
             title = metadata.get("title")
         if metadata.has("artist"):
             artist = metadata.get("artist")
-        thumb_image_path = None
-        if os.path.isfile(thumbnail_location):
-            thumb_image_path = await copy_file(
-                thumbnail_location,
-                os.path.dirname(os.path.abspath(local_file_name))
-            )
-        thumb = None
-        if thumb_image_path is not None and os.path.isfile(thumb_image_path):
-            thumb = thumb_image_path
+
         # send audio
         if edit_media and message.photo:
             sent_message = await message.edit_media(
                 media=InputMediaAudio(
                     media=local_file_name,
-                    thumb=thumb,
+                    #thumb=thumb,
                     caption=caption_str,
                     #parse_mode="html",
                     duration=duration,
@@ -283,7 +241,7 @@ async def upload_single_file(
                 duration=duration,
                 performer=artist,
                 title=title,
-                thumb=thumb,
+                #thumb=thumb,
                 disable_notification=True,
                 # reply_to_message_id=message.id,
                 progress=progress_for_pyrogram,
