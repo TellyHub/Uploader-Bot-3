@@ -244,21 +244,19 @@ async def youtube_dl_call_back(bot, update):
                     command_to_exec, stderr=subprocess.STDOUT)
             except subprocess.CalledProcessError as exc:
                 logger.info("Status : FAIL", exc.returncode, exc.output)
-                bot.edit_message_text(
-                    chat_id=update.from_user.id,
-                    text=exc.output.decode("UTF-8"),
-                    message_id=a.message_id
+                await update.message.edit_caption(
+                    
+                    caption=exc.output.decode("UTF-8"),
+                    parse_mode=enums.ParseMode.HTML
                 )
             else:
                 t_response_arry = t_response.decode(
                     "UTF-8").split("\n")[-1].strip()
-                bot.edit_message_text(
-                    chat_id=update.from_user.id,
-                    text=Translation.AFTER_GET_DL_LINK.format(
+                await update.message.edit_caption(
+                    
+                    caption=Translation.AFTER_GET_DL_LINK.format(
                         t_response_arry, max_days),
-                    parse_mode=pyrogram.ParseMode.HTML,
-                    message_id=a.message_id,
-                    disable_web_page_preview=True
+                    parse_mode=enums.ParseMode.HTML
                 )
                 try:
                     os.remove(after_download_file_name)
