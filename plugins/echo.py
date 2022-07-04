@@ -186,11 +186,15 @@ async def echo(bot, update):
                 )
             ]
             inline_keyboard.append(ikeyboard)
+        cb_string = "{}|{}|{}".format("audio", "5", "mp3")
         inline_keyboard.append([
-            InlineKeyboardButton("MP3 " + "(" + "medium" + ")", callback_data="5:mp3")
+        
+            InlineKeyboardButton("MP3 " + "(" + "medium" + ")", callback_data=cb_string.encode("UTF-8"))
         ])
+        cb_string = "{}|{}|{}".format("audio", "0", "mp3")
+        
         inline_keyboard.append([
-            InlineKeyboardButton("MP3 " + "(" + "best" + ")", callback_data="0:mp3")
+            InlineKeyboardButton("MP3 " + "(" + "best" + ")", callback_data=cb_string.encode("UTF-8"))
         ])
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
         logger.info(reply_markup)
