@@ -28,7 +28,7 @@ from plugins.database.database import db
 from PIL import Image
 from plugins.functions.extractor import *
 from plugins.functions.help_Nekmo_ffmpeg import *
-from plugins.run_cmnd import *
+from plugins.functions.run_cmnd import *
 from plugins.functions.ibk import *
 from pyrogram.types import *
 
