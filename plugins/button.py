@@ -228,7 +228,7 @@ async def youtube_dl_call_back(bot, update):
             url = "https://api.anonfiles.com/upload"
             command_to_exec=[
                 "curl",
-                "-F", f"file=@\"{after_download_file_name}\"", url
+                "-F", f"file=@\"{description}\"", url
             ]
 
             
