@@ -237,25 +237,33 @@ async def youtube_dl_call_back(bot, update):
                 caption=Translation.UPLOAD_START,
                 parse_mode=enums.ParseMode.HTML
             )
-        else:
-                # try to upload file
-            await bot.send_document(
-                chat_id=update.from_user.id,
-                document=download_directory,
-                caption=description,
-                    # reply_markup=reply_markup,
-                thumb=thumb_image_path,
-                reply_to_message_id=update.id
-            )
-            await update.message.edit_caption(
-                caption=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG,
-                parse_mode=enums.ParseMode.HTML
-            )
-        try:
-            os.remove(download_directory)
-            os.remove(thumb_image_path)
-        except:
-            pass
+            try:
+                logger.info(command_to_exec)
+                t_response = subprocess.check_output(
+                    command_to_exec, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as exc:
+                logger.info("Status : FAIL", exc.returncode, exc.output)
+                bot.edit_message_text(
+                    chat_id=update.from_user.id,
+                    text=exc.output.decode("UTF-8"),
+                    message_id=a.message_id
+                )
+            else:
+                t_response_arry = t_response.decode(
+                    "UTF-8").split("\n")[-1].strip()
+                bot.edit_message_text(
+                    chat_id=update.from_user.id,
+                    text=Translation.AFTER_GET_DL_LINK.format(
+                        t_response_arry, max_days),
+                    parse_mode=pyrogram.ParseMode.HTML,
+                    message_id=a.message_id,
+                    disable_web_page_preview=True
+                )
+                try:
+                    os.remove(after_download_file_name)
+                except:
+                    pass
+
 
         else:
             is_w_f = False
