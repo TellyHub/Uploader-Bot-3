@@ -190,7 +190,53 @@ async def youtube_dl_call_back(bot, update):
         stderr=asyncio.subprocess.PIPE,
     )
     # Wait for the subprocess to finish
+    stdout, stderr = await process.communicate()
+    e_response = stderr.decode().strip()
+    t_response = stdout.decode().strip()
+    # LOGGER.info(e_response)
+    # LOGGER.info(t_response)
+    ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
+    if e_response and ad_string_to_replace in e_response:
+        error_message = e_response.replace(ad_string_to_replace, "")
+        await update.message.edit_caption(caption=error_message)
+        return False, None
+    if t_response:
+        dir_contents = len(os.listdir(tmp_directory_for_each_user))
+        await update.message.edit_caption(caption=f"found {dir_contents} files")
+        user_id = update.from_user.id
+        #
+        LOGGER.info(tmp_directory_for_each_user)
+        for a, _, c in os.walk(tmp_directory_for_each_user):
+            for d in c:
+                e = os.path.join(a, d)
+                gaut_am = os.path.basename(e)
+                fi_le = e
+                if cf_name:
+                    fi_le = os.path.join(a, cf_name)
+                    os.rename(e, fi_le)
+                    gaut_am = os.path.basename(fi_le)
 
+        is_cloud = False
+        comd = update.message.reply_to_message.text
+        LOGGER.info(comd)
+        user_command = comd.split()[0]
+
+        else:
+            final_response = await upload_to_tg(
+                update.message,
+                tmp_directory_for_each_user,
+                user_id,
+                {},
+                bot,
+                True,
+                yt_thumb=thumb_image,
+            )
+        LOGGER.info(final_response)
+        #
+        try:
+            shutil.rmtree(tmp_directory_for_each_user)
+        except:
+            pass
 
 
         else:
