@@ -28,6 +28,7 @@ from plugins.database.database import db
 from PIL import Image
 from plugins.functions.help_Nekmo_ffmpeg import *
 from plugins.functions.ran_text import random_char
+from plugins.functions.ibk import *
 from pyrogram.types import *
 
 async def youtube_dl_call_back(bot, update):
