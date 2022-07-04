@@ -228,3 +228,87 @@ async def youtube_dl_call_back(bot, update):
         except:
             pass
     # Wait
+
+
+async def upload_to_tg(
+    message,
+    local_file_name,
+    from_user,
+    dict_contatining_uploaded_files,
+    edit_media=False,
+    custom_caption=None,
+    force_doc=False,
+    cfn=None
+):
+    LOGGER.info(local_file_name)
+    base_file_name = os.path.basename(local_file_name)
+    caption_str = custom_caption
+    if not (caption_str or edit_media):
+        LOGGER.info("fall-back to default file_name")
+        caption_str = "<code>"
+        caption_str += base_file_name
+        caption_str += "</code>"
+    # caption_str += "\n\n"
+    # caption_str += "<a href='tg://user?id="
+    # caption_str += str(from_user)
+    # caption_str += "'>"
+    # caption_str += "Here is the file to the link you sent"
+    # caption_str += "</a>"
+    if os.path.isdir(local_file_name):
+        directory_contents = os.listdir(local_file_name)
+        directory_contents.sort()
+        # number_of_files = len(directory_contents)
+        LOGGER.info(directory_contents)
+        new_m_esg = message
+        if not message.photo:
+            new_m_esg = await message.reply_text(
+                "Found {} files".format(len(directory_contents)),
+                quote=True
+                # reply_to_message_id=message.message_id
+            )
+        for single_file in directory_contents:
+            # recursion: will this FAIL somewhere?
+            await upload_to_tg(
+                new_m_esg,
+                os.path.join(local_file_name, single_file),
+                from_user,
+                dict_contatining_uploaded_files,
+                edit_media,
+                caption_str,
+                force_doc=force_doc,
+                cfn=cfn
+            )
+    else:
+        if os.path.getsize(local_file_name) > TG_MAX_FILE_SIZE:
+            LOGGER.info("TODO")
+            d_f_s = humanbytes(os.path.getsize(local_file_name))
+            i_m_s_g = await message.reply_text(
+                "Telegram does not support uploading this file.\n"
+                f"Detected File Size: {d_f_s} 😡\n"
+                "\n🤖 trying to split the files 🌝🌝🌚"
+            )
+            splitted_dir = await split_large_files(local_file_name)
+            totlaa_sleif = os.listdir(splitted_dir)
+            totlaa_sleif.sort()
+            number_of_files = len(totlaa_sleif)
+            LOGGER.info(totlaa_sleif)
+            ba_se_file_name = os.path.basename(local_file_name)
+            await i_m_s_g.edit_text(
+                f"Detected File Size: {d_f_s} 😡\n"
+                f"<code>{ba_se_file_name}</code> splitted into {number_of_files} files.\n"
+                "trying to upload to Telegram, now ..."
+            )
+            for le_file in totlaa_sleif:
+                # recursion: will this FAIL somewhere?
+                await upload_to_tg(
+                    message,
+                    os.path.join(splitted_dir, le_file),
+                    from_user,
+                    dict_contatining_uploaded_files,
+                    force_doc=force_doc,
+                    cfn=cfn
+                )
+        else:
+            sent_m
+
+
