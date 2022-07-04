@@ -23,26 +23,19 @@ from translation import Translation
 import pyrogram
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-from plugins.helper_funcs.chat_base import TRChatBase
 
 
-@pyrogram.Client.on_message(pyrogram.Filters.command(["getlink"]))
+
+@Client.on_message(filters.command(["getlink"]))
 def get_link(bot, update):
-    TRChatBase(update.from_user.id, update.text, "getlink")
-    if str(update.from_user.id) not in Config.SUPER3X_DLBOT_USERS:
-        bot.send_message(
-            chat_id=update.from_user.id,
-            text=Translation.NOT_AUTH_USER_TEXT,
-            reply_to_message_id=update.message_id
-        )
-        return
+
     if update.reply_to_message is not None:
         reply_message = update.reply_to_message
         download_location = Config.DOWNLOAD_LOCATION + "/"
         a = bot.send_message(
             chat_id=update.from_user.id,
             text=Translation.DOWNLOAD_START,
-            reply_to_message_id=update.message_id
+            reply_to_message_id=update.id
         )
         after_download_file_name = bot.download_media(
             message=reply_message,
@@ -52,7 +45,7 @@ def get_link(bot, update):
         bot.edit_message_text(
             text=Translation.SAVED_RECVD_DOC_FILE,
             chat_id=update.from_user.id,
-            message_id=a.message_id
+            message_id=a.id
         )
         url = "https://transfer.sh/{}.{}".format(str(update.from_user.id), str(download_extension))
         max_days = "5"
@@ -76,7 +69,7 @@ def get_link(bot, update):
             bot.edit_message_text(
                 chat_id=update.from_user.id,
                 text=exc.output.decode("UTF-8"),
-                message_id=a.message_id
+                message_id=a.id
             )
         else:
             t_response_arry = t_response.decode("UTF-8").split("\n")[-1].strip()
