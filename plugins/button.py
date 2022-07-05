@@ -34,7 +34,7 @@ from PIL import Image
 
 def youtube_dl_call_back(bot, update):
     # logger.info(update)
-    cb_data = update.data
+    cb_data = update.data.decode("UTF-8")
     if cb_data.find("|") == -1:
         return ""
     tg_send_type, youtube_dl_format, youtube_dl_ext = cb_data.split("|")
