@@ -157,17 +157,10 @@ def echo(bot, update):
                             "unknown video format", callback_data=cb_string.encode("UTF-8"))
                     ])
                 reply_markup = InlineKeyboardMarkup(inline_keyboard)
-                logger.info(reply_markup)
-                thumbnail = Config.DEF_THUMB_NAIL_VID_S
-                thumbnail_image = Config.DEF_THUMB_NAIL_VID_S
-                if "thumbnail" in response_json:
-                    thumbnail = response_json["thumbnail"]
-                    thumbnail_image = response_json["thumbnail"]
-                thumb_image_path = DownLoadFile(
-                    thumbnail_image, Config.DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg")
+
                 bot.send_message(
                     chat_id=update.from_user.id,
-                    text=Translation.FORMAT_SELECTION.format(thumbnail),
+                    text=Translation.FORMAT_SELECTION.format(Thumbnail),
                     reply_markup=reply_markup,
                     #parse_mode=pyrogram.ParseMode.HTML,
                     reply_to_message_id=update.id
