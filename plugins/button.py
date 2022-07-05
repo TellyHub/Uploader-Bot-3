@@ -31,7 +31,7 @@ from hachoir.parser import createParser
 from PIL import Image
 
 
-@Client_on_callback_query()
+@Client.on_callback_query()
 def youtube_dl_call_back(bot, update)
     # logger.info(update)
     cb_data = update.data
