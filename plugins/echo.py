@@ -39,20 +39,7 @@ def echo(bot, update):
         url = text
         if "|" in url:
 
-            thumb_image_path = Config.DOWNLOAD_LOCATION + \
-                "/" + str(update.from_user.id) + ".jpg"
-            if not os.path.exists(thumb_image_path):
-                thumb_image_path = None
-            else:
-                # resize image
-                # ref: https://t.me/PyrogramChat/44663
-                # https://stackoverflow.com/a/21669827/4723940
-                Image.open(thumb_image_path).convert(
-                    "RGB").save(thumb_image_path)
-                img = Image.open(thumb_image_path)
-                # https://stackoverflow.com/a/37631799/4723940
-                new_img = img.resize((90, 90))
-                new_img.save(thumb_image_path, "JPEG", optimize=True)
+
             url, file_name = url.split("|")
             url = url.strip()
             # https://stackoverflow.com/a/761825/4723940
@@ -91,7 +78,7 @@ def echo(bot, update):
                     document=after_download_path,
                     caption=description,
                     # reply_markup=reply_markup,
-                    thumb=thumb_image_path,
+                    #thumb=thumb_image_path,
                     reply_to_message_id=update.id
                 )
                 bot.edit_message_text(
@@ -102,7 +89,7 @@ def echo(bot, update):
                 )
             try:
                 os.remove(after_download_path)
-                os.remove(thumb_image_path)
+                
             except:
                 pass
         else:
@@ -207,40 +194,7 @@ def echo(bot, update):
                 chat_id=update.from_user.id,
                 message_id=a.id
             )
-            thumb_image_path = Config.DOWNLOAD_LOCATION + \
-                "/" + str(update.from_user.id) + ".jpg"
-            # get the correct width, height, and duration for videos greater than 10MB
-            # ref: message from @BotSupport
-            width = 0
-            height = 0
-            duration = 0
-            metadata = extractMetadata(createParser(mp4_file))
-            if metadata.has("duration"):
-                duration = metadata.get('duration').seconds
-            # get the correct width, height, and duration for videos greater than 10MB
-            if os.path.exists(thumb_image_path):
-                metadata = extractMetadata(createParser(thumb_image_path))
-                if metadata.has("width"):
-                    width = metadata.get("width")
-                if metadata.has("height"):
-                    height = metadata.get("height")
-                # resize image
-                # ref: https://t.me/PyrogramChat/44663
-                # https://stackoverflow.com/a/21669827/4723940
-                Image.open(thumb_image_path).convert(
-                    "RGB").save(thumb_image_path)
-                img = Image.open(thumb_image_path)
-                # https://stackoverflow.com/a/37631799/4723940
-                new_img = img.resize((90, 90))
-                new_img.save(thumb_image_path, "JPEG", optimize=True)
-            else:
-                thumb_image_path = None
-            # try to upload file
-            bot.edit_message_text(
-                text=Translation.UPLOAD_START,
-                chat_id=update.from_user.id,
-                message_id=a.id
-            )
+
             bot.send_video(
                 chat_id=update.from_user.id,
                 video=mp4_file,
@@ -250,7 +204,7 @@ def echo(bot, update):
                 height=height,
                 supports_streaming=True,
                 # reply_markup=reply_markup,
-                thumb=thumb_image_path,
+                #thumb=thumb_image_path,
                 reply_to_message_id=update.id
             )
             os.remove(mp4_file)
