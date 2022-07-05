@@ -44,7 +44,7 @@ def youtube_dl_call_back(bot, update):
     bot.edit_message_text(
         text=Translation.DOWNLOAD_START,
         chat_id=update.from_user.id,
-        message_id=update.message.message_id
+        message_id=update.id
     )
     description = Translation.CUSTOM_CAPTION_UL_FILE
     download_directory = ""
