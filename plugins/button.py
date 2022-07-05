@@ -31,8 +31,8 @@ from hachoir.parser import createParser
 from PIL import Image
 
 
-@Client.on_callback_query()
-def youtube_dl_call_back(bot, update)
+
+def youtube_dl_call_back(bot, update):
     # logger.info(update)
     cb_data = update.data
     if cb_data.find("|") == -1:
