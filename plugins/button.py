@@ -1,3 +1,36 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# (c) Shrimadhav U K
+
+# the logging things
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+import json
+import math
+import os
+import requests
+import subprocess
+import time
+
+from plugins.config import Config
+from plugins.script import Translation
+
+import pyrogram
+logging.getLogger("pyrogram").setLevel(logging.WARNING)
+
+
+
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
+# https://stackoverflow.com/a/37631799/4723940
+from PIL import Image
+
+
+
+
 @pyrogram.Client.on_callback_query()
 def button(bot, update):
     # logger.info(update)
