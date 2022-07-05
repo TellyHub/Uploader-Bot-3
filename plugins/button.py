@@ -32,7 +32,7 @@ from PIL import Image
 
 
 
-async def youtube_dl_call_back(bot, update)
+def youtube_dl_call_back(bot, update)
     # logger.info(update)
     cb_data = update.data.decode("UTF-8")
     if cb_data.find("|") == -1:
