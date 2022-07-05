@@ -27,7 +27,7 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 # https://stackoverflow.com/a/37631799/4723940
 from PIL import Image
-
+from pyrogram.types import *
 from pyrogram import Client, filters
 
 
@@ -152,7 +152,7 @@ def echo(bot, update):
                             inline_keyboard.append(ikeyboard)
                     cb_string = "{}|{}|{}".format("audio", "5", "mp3")
                     inline_keyboard.append([
-                        pyrogram.InlineKeyboardButton(
+                        InlineKeyboardButton(
                             "MP3 " + "(" + "medium" + ")", callback_data=cb_string.encode("UTF-8"))
                     ])
                     cb_string = "{}|{}|{}".format("audio", "0", "mp3")
