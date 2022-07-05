@@ -1,8 +1,7 @@
 import os
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
 from plugins.config import Config
-from plugins.dl_button import ddl_call_back
-from plugins.button import youtube_dl_call_back
+
 from plugins.settings.settings import OpenSettings
 from plugins.script import Translation
 from pyrogram import Client, types
@@ -71,10 +70,7 @@ async def button(bot, update):
     elif "close" in update.data:
         await update.message.delete(True)
 
-    elif "|" in update.data:
-        await youtube_dl_call_back(bot, update)
-    elif "=" in update.data:
-        await ddl_call_back(bot, update)
+
 
     else:
         await update.message.delete()
