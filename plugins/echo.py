@@ -20,9 +20,9 @@ from plugins.script import Translation
 
 import pyrogram
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
-
-
-
+from plugins.functions.help_uploadbot import *
+from plugins.functions.display_progress import *
+from plugins.functions.help_Nekmo_ffmpeg import *
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 # https://stackoverflow.com/a/37631799/4723940
