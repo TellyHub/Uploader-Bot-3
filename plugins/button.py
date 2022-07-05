@@ -42,8 +42,7 @@ def button(bot, update):
     tg_send_type, youtube_dl_format, youtube_dl_ext = cb_data.split("|")
     youtube_dl_url = update.message.reply_to_message.text
 
-    thumb_image_path = Config.DOWNLOAD_LOCATION + \
-        "/" + str(update.from_user.id) + ".jpg"
+    
     bot.edit_message_text(
         text=Translation.DOWNLOAD_START,
         chat_id=update.from_user.id,
@@ -142,32 +141,7 @@ def button(bot, update):
                 except:
                     pass
         else:
-            # get the correct width, height, and duration for videos greater than 10MB
-            # ref: message from @BotSupport
-            width = 0
-            height = 0
-            duration = 0
-            metadata = extractMetadata(createParser(download_directory))
-            if metadata.has("duration"):
-                duration = metadata.get('duration').seconds
-            metadata = extractMetadata(createParser(thumb_image_path))
-            if metadata.has("width"):
-                width = metadata.get("width")
-            if metadata.has("height"):
-                height = metadata.get("height")
-            # get the correct width, height, and duration for videos greater than 10MB
-            if os.path.exists(thumb_image_path):
-                # resize image
-                # ref: https://t.me/PyrogramChat/44663
-                # https://stackoverflow.com/a/21669827/4723940
-                Image.open(thumb_image_path).convert(
-                    "RGB").save(thumb_image_path)
-                img = Image.open(thumb_image_path)
-                # https://stackoverflow.com/a/37631799/4723940
-                new_img = img.resize((90, 90))
-                new_img.save(thumb_image_path, "JPEG", optimize=True)
-            else:
-                thumb_image_path = None
+
             # try to upload file
             if tg_send_type == "audio":
                 bot.send_audio(
@@ -178,7 +152,7 @@ def button(bot, update):
                     # performer=response_json["uploader"],
                     # title=response_json["title"],
                     # reply_markup=reply_markup,
-                    thumb=thumb_image_path,
+                    #thumb=thumb_image_path,
                     reply_to_message_id=update.id
                 )
             elif tg_send_type == "file":
@@ -200,12 +174,12 @@ def button(bot, update):
                     height=height,
                     supports_streaming=True,
                     # reply_markup=reply_markup,
-                    thumb=thumb_image_path,
+                    #thumb=thumb_image_path,
                     reply_to_message_id=update.id
                 )
             try:
                 os.remove(download_directory)
-                os.remove(thumb_image_path)
+                #os.remove(thumb_image_path)
             except:
                 pass
             bot.edit_message_text(
